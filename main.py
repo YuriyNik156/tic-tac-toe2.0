@@ -24,6 +24,14 @@ def check_winner():
     return False
 
 
+def is_draw():
+    for row in buttons:
+        for btn in row:
+            if btn["text"] == "":
+                return False
+    return True
+
+
 def on_click(row, col):
     global current_player
 
@@ -34,6 +42,10 @@ def on_click(row, col):
 
     if check_winner():
         messagebox.showinfo("Игра окончена", f"Игрок {current_player} победил!")
+        return
+
+    if is_draw():
+        messagebox.showinfo("Игра окончена", "Ничья!")
         return
 
     current_player = "0" if current_player == "X" else "X"
