@@ -3,13 +3,25 @@ from tkinter import messagebox
 
 window = tk.Tk()
 window.title("Крестики-нолики")
-window.geometry("380x460")
+window.geometry("380x500")
 window.configure(bg="#f0f0f0")
 
 current_player = "X"
 player_choice = None
 buttons = []
 status_label = None
+score_x = 0
+score_o = 0
+score_label = None
+
+
+def update_score(winner):
+    global score_x, score_o
+    if winner == "X":
+        score_x += 1
+    elif winner == "0":
+        score_o += 1
+    score_label.config(text=f"Счёт — X: {score_x} | 0: {score_o}")
 
 
 def check_winner():
@@ -50,6 +62,7 @@ def on_click(row, col):
 
     if check_winner():
         status_label.config(text=f"Игрок {current_player} победил!")
+        update_score(current_player)
         disable_all_buttons()
         return
 
@@ -88,6 +101,7 @@ def start_game(choice):
     start_frame.pack_forget()
     game_frame.pack()
     status_label.config(text=f"Ход игрока: {current_player}")
+    score_label.config(text=f"Счёт — X: {score_x} | 0: {score_o}")
 
 
 # Выбор символа перед игрой
@@ -104,8 +118,11 @@ choose_o_btn.pack(pady=5)
 
 start_frame.pack(pady=100)
 
-# Основной фрейм игры (будет показан позже)
+# Основной фрейм игры
 game_frame = tk.Frame(window, bg="#f0f0f0")
+
+score_label = tk.Label(game_frame, text="", font=("Arial", 14), bg="#f0f0f0", fg="#2d3436")
+score_label.pack(pady=5)
 
 status_label = tk.Label(game_frame, text="", font=("Arial", 16), bg="#f0f0f0", fg="#34495e")
 status_label.pack(pady=10)
