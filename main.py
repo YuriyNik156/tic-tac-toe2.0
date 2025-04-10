@@ -3,16 +3,16 @@ from tkinter import messagebox
 
 window = tk.Tk()
 window.title("Крестики-нолики")
-window.geometry("380x440")
+window.geometry("380x460")
 window.configure(bg="#f0f0f0")
 
 current_player = "X"
+player_choice = None
 buttons = []
 status_label = None
 
 
 def check_winner():
-    # Проверка строк и столбцов
     for i in range(3):
         if buttons[i][0]["text"] == buttons[i][1]["text"] == buttons[i][2]["text"] != "":
             highlight_buttons([(i, 0), (i, 1), (i, 2)])
@@ -21,7 +21,6 @@ def check_winner():
             highlight_buttons([(0, i), (1, i), (2, i)])
             return True
 
-    # Проверка диагоналей
     if buttons[0][0]["text"] == buttons[1][1]["text"] == buttons[2][2]["text"] != "":
         highlight_buttons([(0, 0), (1, 1), (2, 2)])
         return True
@@ -75,25 +74,49 @@ def disable_all_buttons():
 
 def reset_game():
     global current_player
-    current_player = "X"
+    current_player = player_choice
     for row in buttons:
         for btn in row:
             btn.config(text="", state="normal", bg="white")
-    status_label.config(text="Ход игрока: X")
+    status_label.config(text=f"Ход игрока: {current_player}")
 
 
-# Статус игры
-status_label = tk.Label(window, text="Ход игрока: X", font=("Arial", 16), bg="#f0f0f0", fg="#34495e")
+def start_game(choice):
+    global current_player, player_choice
+    player_choice = choice
+    current_player = choice
+    start_frame.pack_forget()
+    game_frame.pack()
+    status_label.config(text=f"Ход игрока: {current_player}")
+
+
+# Выбор символа перед игрой
+start_frame = tk.Frame(window, bg="#f0f0f0")
+tk.Label(start_frame, text="Выберите, чем играть:", font=("Arial", 16), bg="#f0f0f0").pack(pady=10)
+
+choose_x_btn = tk.Button(start_frame, text="Играть за X", font=("Arial", 14), width=15,
+                         bg="#55efc4", fg="black", command=lambda: start_game("X"))
+choose_x_btn.pack(pady=5)
+
+choose_o_btn = tk.Button(start_frame, text="Играть за 0", font=("Arial", 14), width=15,
+                         bg="#81ecec", fg="black", command=lambda: start_game("0"))
+choose_o_btn.pack(pady=5)
+
+start_frame.pack(pady=100)
+
+# Основной фрейм игры (будет показан позже)
+game_frame = tk.Frame(window, bg="#f0f0f0")
+
+status_label = tk.Label(game_frame, text="", font=("Arial", 16), bg="#f0f0f0", fg="#34495e")
 status_label.pack(pady=10)
 
-# Игровое поле
-frame = tk.Frame(window, bg="#f0f0f0")
-frame.pack()
+board_frame = tk.Frame(game_frame, bg="#f0f0f0")
+board_frame.pack()
 
 for i in range(3):
     row = []
     for j in range(3):
-        btn = tk.Button(frame, text="", font=("Arial", 24, "bold"), width=5, height=2,
+        btn = tk.Button(board_frame, text="", font=("Arial", 24, "bold"), width=5, height=2,
                         bg="white", fg="#2c3e50",
                         activebackground="#dff9fb",
                         command=lambda r=i, c=j: on_click(r, c))
@@ -101,8 +124,7 @@ for i in range(3):
         row.append(btn)
     buttons.append(row)
 
-# Кнопка сброса
-reset_button = tk.Button(window, text="Сбросить игру", font=("Arial", 14), bg="#74b9ff", fg="white",
+reset_button = tk.Button(game_frame, text="Сбросить игру", font=("Arial", 14), bg="#74b9ff", fg="white",
                          activebackground="#0984e3", command=reset_game)
 reset_button.pack(pady=15)
 
