@@ -3,7 +3,7 @@ from tkinter import messagebox
 
 window = tk.Tk()
 window.title("Крестики-нолики")
-window.geometry("300x350")
+window.geometry("300x400")
 
 current_player = "X"
 buttons = []
@@ -33,18 +33,32 @@ def on_click(row, col):
     buttons[row][col]["text"] = current_player
 
     if check_winner():
-        messagebox.showinfo(f"Игра окончена", f"Игрок {current_player} победил!")
+        messagebox.showinfo("Игра окончена", f"Игрок {current_player} победил!")
+        return
 
     current_player = "0" if current_player == "X" else "X"
 
 
+def reset_game():
+    global current_player
+    current_player = "X"
+    for row in buttons:
+        for btn in row:
+            btn["text"] = ""
+
+
+# Создание игрового поля
 for i in range(3):
     row = []
     for j in range(3):
-        btn = tk.Button(window, text = "", font = ("Arial", 20), width = 5, height = 2, command = lambda r = i, c = j: on_click(r, c))
-        btn.grid(row = i, column = j)
+        btn = tk.Button(window, text="", font=("Arial", 20), width=5, height=2,
+                        command=lambda r=i, c=j: on_click(r, c))
+        btn.grid(row=i, column=j)
         row.append(btn)
     buttons.append(row)
 
+# Кнопка сброса игры
+reset_button = tk.Button(window, text="Сбросить игру", font=("Arial", 14), command=reset_game)
+reset_button.grid(row=3, column=0, columnspan=3, pady=10)
 
 window.mainloop()
